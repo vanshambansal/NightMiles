@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YouTube Embed & Playlist Isolation Test</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #0f172a;
+      color: #f8fafc;
+      padding: 30px;
+      line-height: 1.6;
+    }
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 8px;
+      color: #38bdf8;
+    }
+    .info {
+      color: #94a3b8;
+      font-size: 0.9rem;
+      margin-bottom: 24px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    .card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .card h2 {
+      font-size: 1.1rem;
+      margin-bottom: 12px;
+      color: #fbbf24;
+    }
+    iframe {
+      width: 100%;
+      height: 240px;
+      border-radius: 8px;
+      border: 1px solid #475569;
+    }
+    .log-box {
+      margin-top: 10px;
+      background: #020617;
+      padding: 10px;
+      border-radius: 6px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      color: #a5f3fc;
+      min-height: 50px;
+      max-height: 120px;
+      overflow-y: auto;
+    }
+    button {
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      margin-top: 10px;
+      margin-right: 6px;
+    }
+    button:hover {
+      background: #2563eb;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🧪 YouTube Embed & Playlist Diagnostic Test</h1>
+  <p class="info">Testing Video: <code>ZVG5u3_o93U</code> | Playlist: <code>PLiqQAY6N4wHJ0PSuhtNtsYh6xPyir9yPY</code></p>
+
+  <div class="grid">
+    <!-- Test 1: Direct Video IFrame Embed -->
+    <div class="card">
+      <h2>Test 1: Direct Video Standard Embed</h2>
+      <p>Using YouTube's direct video URL:</p>
+      <iframe 
+        src="https://www.youtube.com/embed/ZVG5u3_o93U" 
+        title="Direct Video Test" 
+        frameborder="0" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+        referrerpolicy="strict-origin-when-cross-origin" 
+        allowfullscreen>
+      </iframe>
+    </div>
+
+    <!-- Test 2: Playlist IFrame Embed -->
+    <div class="card">
+      <h2>Test 2: Playlist Standard Embed</h2>
+      <p>Using YouTube's playlist URL:</p>
+      <iframe 
+        src="https://www.youtube.com/embed/videoseries?list=PLiqQAY6N4wHJ0PSuhtNtsYh6xPyir9yPY" 
+        title="Playlist Test" 
+        frameborder="0" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+        referrerpolicy="strict-origin-when-cross-origin" 
+        allowfullscreen>
+      </iframe>
+    </div>
+
+    <!-- Test 3: JavaScript API Video Player -->
+    <div class="card">
+      <h2>Test 3: JS API Direct Video Player</h2>
+      <div id="jsVideoPlayerTarget"></div>
+      <div>
+        <button id="btnPlayVideo">Play Video (JS API)</button>
+        <button id="btnPauseVideo">Pause</button>
+      </div>
+      <div class="log-box" id="videoApiLog">Waiting for API...</div>
+    </div>
+
+    <!-- Test 4: JavaScript API Playlist Player -->
+    <div class="card">
+      <h2>Test 4: JS API Playlist Player</h2>
+      <div id="jsPlaylistPlayerTarget"></div>
+      <div>
+        <button id="btnPlayPlaylist">Play Playlist (JS API)</button>
+        <button id="btnPausePlaylist">Pause</button>
+        <button id="btnNextPlaylist">Next Track</button>
+      </div>
+      <div class="log-box" id="playlistApiLog">Waiting for API...</div>
+    </div>
+  </div>
+
+  <!-- YouTube IFrame API Script -->
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <script>
+    let videoPlayer = null;
+    let playlistPlayer = null;
+
+    const videoLog = document.getElementById('videoApiLog');
+    const playlistLog = document.getElementById('playlistApiLog');
+
+    const stateNames = {
+      '-1': 'UNSTARTED',
+      '0': 'ENDED',
+      '1': 'PLAYING',
+      '2': 'PAUSED',
+      '3': 'BUFFERING',
+      '5': 'CUED'
+    };
+
+    function logVideo(msg) {
+      console.log('[Video API Test]', msg);
+      videoLog.innerHTML += '<div>' + msg + '</div>';
+    }
+
+    function logPlaylist(msg) {
+      console.log('[Playlist API Test]', msg);
+      playlistLog.innerHTML += '<div>' + msg + '</div>';
+    }
+
+    window.onYouTubeIframeAPIReady = function() {
+      logVideo('YouTube API script ready.');
+      logPlaylist('YouTube API script ready.');
+
+      // 1. Init Direct Video JS Player
+      videoPlayer = new YT.Player('jsVideoPlayerTarget', {
+        height: '240',
+        width: '100%',
+        videoId: 'ZVG5u3_o93U',
+        events: {
+          onReady: (e) => logVideo('Video Player READY!'),
+          onStateChange: (e) => logVideo('State: ' + (stateNames[e.data] || e.data)),
+          onError: (e) => logVideo('⚠️ Video Error Code: ' + e.data)
+        }
+      });
+
+      // 2. Init Playlist JS Player
+      playlistPlayer = new YT.Player('jsPlaylistPlayerTarget', {
+        height: '240',
+        width: '100%',
+        playerVars: {
+          listType: 'playlist',
+          list: 'PLiqQAY6N4wHJ0PSuhtNtsYh6xPyir9yPY'
+        },
+        events: {
+          onReady: (e) => logPlaylist('Playlist Player READY!'),
+          onStateChange: (e) => logPlaylist('State: ' + (stateNames[e.data] || e.data)),
+          onError: (e) => logPlaylist('⚠️ Playlist Error Code: ' + e.data)
+        }
+      });
+    };
+
+    // Controls
+    document.getElementById('btnPlayVideo').addEventListener('click', () => {
+      if (videoPlayer && typeof videoPlayer.playVideo === 'function') {
+        logVideo('Clicked Play Video');
+        videoPlayer.playVideo();
+      }
+    });
+    document.getElementById('btnPauseVideo').addEventListener('click', () => {
+      if (videoPlayer && typeof videoPlayer.pauseVideo === 'function') {
+        videoPlayer.pauseVideo();
+      }
+    });
+
+    document.getElementById('btnPlayPlaylist').addEventListener('click', () => {
+      if (playlistPlayer && typeof playlistPlayer.playVideo === 'function') {
+        logPlaylist('Clicked Play Playlist');
+        playlistPlayer.playVideo();
+      }
+    });
+    document.getElementById('btnPausePlaylist').addEventListener('click', () => {
+      if (playlistPlayer && typeof playlistPlayer.pauseVideo === 'function') {
+        playlistPlayer.pauseVideo();
+      }
+    });
+    document.getElementById('btnNextPlaylist').addEventListener('click', () => {
+      if (playlistPlayer && typeof playlistPlayer.nextVideo === 'function') {
+        logPlaylist('Clicked Next Track');
+        playlistPlayer.nextVideo();
+      }
+    });
+  </script>
+</body>
+</html>

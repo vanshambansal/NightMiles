@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NightMiles</title>
+  <meta name="description"
+    content="An atmospheric lofi music experience beside a rain-streaked train window on a late-night journey with NightMiles.">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400&family=Noto+Serif+Devanagari:wght@300;400;500&family=Outfit:wght@300;400;500&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="window-scene" id="windowScene">
+    <div class="scene-background" id="sceneBackground"></div>
+    <div class="scene-vignette"></div>
+    <div class="ambient-glow"></div>
+    <canvas id="rainCanvas" class="rain-canvas"></canvas>
+  </div>
+
+  <header class="top-bar" id="topBar">
+    <div class="time-display" id="timeDisplay" title="Local Time">
+      <span class="time-text" id="timeText">--:-- --</span>
+    </div>
+
+    <div class="top-actions">
+      <button type="button" class="btn-top-action" id="viewFramingToggle"
+        title="Toggle Wallpaper Framing (Window / Panoramic)" aria-label="Toggle Wallpaper Framing">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.5" />
+          <line x1="9" y1="4" x2="9" y2="20" stroke="currentColor" stroke-width="1.2" />
+        </svg>
+      </button>
+
+      <button type="button" class="btn-top-action" id="zenModeToggle" title="Zen Focus Mode (Press Z)"
+        aria-label="Toggle Zen Focus Mode">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M15 3H21V9M9 21H3V15M21 3L14 10M3 21L10 14" stroke="currentColor" stroke-width="1.5"
+            stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </button>
+
+      <a href="#" id="youtubePlaylistLink" class="header-link youtube-link" target="_blank" rel="noopener noreferrer"
+        title="Open YouTube Playlist">
+        <span>YouTube</span>
+        <svg class="external-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4.5 11.5L11.5 4.5M11.5 4.5H6M11.5 4.5V10" stroke="currentColor" stroke-width="1.25"
+            stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </a>
+    </div>
+  </header>
+
+  <div class="center-mood-container" id="moodContainer" title="Click to cycle thoughts">
+    <p class="center-mood-quote" id="moodQuote">कभी-कभी बस चलते रहना ही काफ़ी होता है।</p>
+    <span class="center-mood-sub" id="moodSub">sometimes, just moving forward is enough</span>
+  </div>
+
+  <main class="player-container" id="playerContainer">
+    <div class="floating-player" id="floatingPlayer">
+      <div class="track-artwork-wrap">
+        <img src="assets/bg-train-window.png" alt="Track Artwork" class="track-artwork" id="trackArtwork">
+        <div class="artwork-overlay"></div>
+      </div>
+
+      <div class="track-details">
+        <div class="track-meta">
+          <h1 class="track-title" id="trackTitle">NightMiles Lofi Journey</h1>
+          <span class="track-artist" id="trackArtist">Night Train Chill</span>
+        </div>
+
+        <div class="timeline-wrapper">
+          <span class="time-label current-time" id="currentTime">0:00</span>
+          <div class="progress-bar-container" id="progressBarContainer" role="slider" aria-label="Audio progress"
+            aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0">
+            <div class="progress-track">
+              <div class="progress-fill" id="progressFill"></div>
+              <div class="progress-handle" id="progressHandle"></div>
+            </div>
+          </div>
+          <span class="time-label total-duration" id="totalDuration">3:20</span>
+        </div>
+      </div>
+
+      <div class="player-controls">
+        <button type="button" class="btn-control" id="prevBtn" aria-label="Previous Track"
+          title="Previous Track (Left Arrow)">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19 20L9 12L19 4V20Z" fill="currentColor" />
+            <path d="M5 19V5" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+        </button>
+
+        <button type="button" class="btn-control btn-play-pause" id="playPauseBtn" aria-label="Play"
+          title="Play / Pause (Space)">
+          <svg class="icon-play" id="iconPlay" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 5V19L19 12L8 5Z" fill="currentColor" />
+          </svg>
+          <svg class="icon-pause hidden" id="iconPause" viewBox="0 0 24 24" fill="none"
+            xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 5H10V19H6V5Z" fill="currentColor" />
+            <path d="M14 5H18V19H14V5Z" fill="currentColor" />
+          </svg>
+        </button>
+
+        <button type="button" class="btn-control" id="nextBtn" aria-label="Next Track" title="Next Track (Right Arrow)">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5 4L15 12L5 20V4Z" fill="currentColor" />
+            <path d="M19 5V19" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+        </button>
+
+        <div class="volume-container">
+          <button type="button" class="btn-control btn-volume" id="volumeBtn" aria-label="Mute / Unmute"
+            title="Mute Toggle (M)">
+            <svg class="icon-volume-high" id="iconVolumeHigh" viewBox="0 0 24 24" fill="none"
+              xmlns="http://www.w3.org/2000/svg">
+              <path d="M11 5L6 9H2V15H6L11 19V5Z" fill="currentColor" />
+              <path d="M15.54 8.46C16.48 9.4 17.01 10.67 17.01 12C17.01 13.33 16.48 14.6 15.54 15.54"
+                stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+              <path d="M19.07 4.93C20.95 6.81 22 9.34 22 12C22 14.66 20.95 17.19 19.07 19.07" stroke="currentColor"
+                stroke-width="1.5" stroke-linecap="round" />
+            </svg>
+            <svg class="icon-volume-muted hidden" id="iconVolumeMuted" viewBox="0 0 24 24" fill="none"
+              xmlns="http://www.w3.org/2000/svg">
+              <path d="M11 5L6 9H2V15H6L11 19V5Z" fill="currentColor" />
+              <path d="M23 9L17 15M17 9L23 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+            </svg>
+          </button>
+          <div class="volume-slider-popup">
+            <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="80"
+              aria-label="Volume Slider">
+          </div>
+        </div>
+
+        <button type="button" class="btn-control btn-rain-audio" id="rainAudioBtn" aria-label="Ambient Rain Audio"
+          title="Toggle Rain Atmosphere (R)">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M12 3C8.5 7.5 7 10.5 7 13.5C7 16.5376 9.23858 19 12 19C14.7614 19 17 16.5376 17 13.5C17 10.5 15.5 7.5 12 3Z"
+              stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
+            <path d="M10 13C10 12 11 10 12 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"
+              opacity="0.6" />
+          </svg>
+        </button>
+
+        <button type="button" class="btn-control btn-train-audio" id="trainAudioBtn" aria-label="Ambient Train Rails"
+          title="Toggle Train Track Rumble (T)">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="4" y="3" width="16" height="15" rx="3" stroke="currentColor" stroke-width="1.5" />
+            <line x1="4" y1="10" x2="20" y2="10" stroke="currentColor" stroke-width="1.2" />
+            <circle cx="8" cy="14.5" r="1.2" fill="currentColor" />
+            <circle cx="16" cy="14.5" r="1.2" fill="currentColor" />
+            <path d="M6 18L3 21M18 18L21 21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+          </svg>
+        </button>
+
+        <div class="sleep-timer-container" id="sleepTimerContainer">
+          <button type="button" class="btn-control btn-sleep-timer" id="sleepTimerBtn" aria-label="Sleep Timer"
+            title="Custom Sleep Timer">
+            <svg class="icon-moon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79Z" stroke="currentColor" stroke-width="1.6"
+                stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <span class="sleep-timer-badge hidden" id="sleepTimerBadge">30m</span>
+          </button>
+
+          <div class="sleep-timer-popup" id="sleepTimerPopup">
+            <div class="sleep-popup-header">
+              <span class="sleep-popup-title">Sleep Timer</span>
+              <span class="sleep-popup-val" id="sleepPopupVal">30 min</span>
+            </div>
+
+            <input type="range" class="sleep-slider" id="sleepSlider" min="1" max="120" value="30"
+              aria-label="Sleep Timer Minutes Slider">
+
+            <div class="sleep-presets">
+              <button type="button" class="preset-btn" data-min="15">15m</button>
+              <button type="button" class="preset-btn active" data-min="30">30m</button>
+              <button type="button" class="preset-btn" data-min="45">45m</button>
+              <button type="button" class="preset-btn" data-min="60">60m</button>
+            </div>
+
+            <button type="button" class="btn-timer-toggle" id="timerToggleBtn">Start Timer</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <aside class="creator-credit-wrap" id="creatorCredit">
+    <a href="https://github.com/vanshambansal" target="_blank" rel="noopener noreferrer" class="creator-pill"
+      title="Crafted by Vansham (GitHub)">
+      <span>crafted by vansham</span>
+      <svg class="external-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4.5 11.5L11.5 4.5M11.5 4.5H6M11.5 4.5V10" stroke="currentColor" stroke-width="1.25"
+          stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </a>
+  </aside>
+
+  <button type="button" class="btn-zen-exit hidden" id="zenExitBtn" aria-label="Exit Zen Focus Mode"
+    title="Exit Zen Mode (Press Z or Esc)">
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M4 14H10V20M20 10H14V4M14 10L21 3M10 14L3 21" stroke="currentColor" stroke-width="1.5"
+        stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+    <span>Exit Focus</span>
+  </button>
+
+  <div class="youtube-embed-wrapper" aria-hidden="true">
+    <div id="youtubePlayerTarget"></div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+
+</html>
