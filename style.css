@@ -910,11 +910,13 @@ body.zen-mode .center-mood-container {
   position: fixed;
   bottom: 0;
   right: 0;
-  width: 320px;
-  height: 180px;
-  opacity: 0.001;
+  width: 280px;
+  height: 160px;
+  opacity: 0.01;
   pointer-events: none;
   z-index: -999;
+  transform: translate3d(0, 0, 0);
+  overflow: hidden;
 }
 
 @media (max-width: 640px) {

@@ -232,18 +232,32 @@
     }
   }
 
+  function optimizeStreamSpeed() {
+    if (!ytPlayer) return;
+    try {
+      if (typeof ytPlayer.setPlaybackQuality === 'function') {
+        ytPlayer.setPlaybackQuality('small');
+      }
+      if (typeof ytPlayer.setPlaybackQualityRange === 'function') {
+        ytPlayer.setPlaybackQualityRange('small', 'small');
+      }
+    } catch (e) {}
+  }
+
   function onPlayerReady(event) {
     isPlayerReady = true;
     ytPlayer = event.target;
 
     try {
       ytPlayer.setVolume(currentVolume);
+      optimizeStreamSpeed();
     } catch (err) {}
 
     startProgressTracker();
   }
 
   function onPlayerStateChange(event) {
+    optimizeStreamSpeed();
     if (event.data === 1) {
       setPlayState(true);
       fetchLiveTrackMetadata();
@@ -255,6 +269,14 @@
       fetchLiveTrackMetadata();
     }
   }
+
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && isPlaying && ytPlayer && typeof ytPlayer.getPlayerState === 'function') {
+      if (ytPlayer.getPlayerState() === 2) {
+        try { ytPlayer.playVideo(); } catch (e) {}
+      }
+    }
+  });
 
   function onPlayerError(event) {
     if (event.data === 150 || event.data === 101 || event.data === 100) {
