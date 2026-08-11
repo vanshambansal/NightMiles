@@ -943,6 +943,10 @@ body.zen-mode .center-mood-container {
     padding: 0 max(14px, env(safe-area-inset-right)) 0 max(14px, env(safe-area-inset-left));
   }
 
+  #viewFramingToggle {
+    display: none;
+  }
+
   .top-actions {
     gap: 7px;
   }
@@ -1160,6 +1164,10 @@ body.zen-mode .center-mood-container {
   .top-bar {
     height: 46px;
     padding: 0 max(16px, env(safe-area-inset-right)) 0 max(16px, env(safe-area-inset-left));
+  }
+
+  #viewFramingToggle {
+    display: none;
   }
 
   .center-mood-container {
