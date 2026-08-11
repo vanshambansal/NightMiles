@@ -125,7 +125,8 @@ html, body {
   left: 0;
   right: 0;
   height: 72px;
-  padding: 0 36px;
+  padding: 0 max(36px, env(safe-area-inset-right)) 0 max(36px, env(safe-area-inset-left));
+  padding-top: max(0px, env(safe-area-inset-top));
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -307,13 +308,13 @@ html, body {
 
 .player-container {
   position: fixed;
-  bottom: 32px;
+  bottom: max(32px, calc(16px + env(safe-area-inset-bottom)));
   left: 0;
   right: 0;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0 24px;
+  padding: 0 max(24px, env(safe-area-inset-right)) 0 max(24px, env(safe-area-inset-left));
   z-index: 10;
   pointer-events: none;
   transition: var(--transition-smooth);
@@ -919,10 +920,31 @@ body.zen-mode .center-mood-container {
   overflow: hidden;
 }
 
+@media (max-width: 768px) {
+  .top-bar {
+    height: 64px;
+    padding: 0 max(20px, env(safe-area-inset-right)) 0 max(20px, env(safe-area-inset-left));
+  }
+
+  .creator-credit-wrap {
+    bottom: max(16px, calc(10px + env(safe-area-inset-bottom)));
+    right: max(16px, calc(10px + env(safe-area-inset-right)));
+  }
+
+  .creator-pill {
+    padding: 5px 11px;
+    font-size: 0.72rem;
+  }
+}
+
 @media (max-width: 640px) {
   .top-bar {
-    height: 60px;
-    padding: 0 16px;
+    height: 58px;
+    padding: 0 max(14px, env(safe-area-inset-right)) 0 max(14px, env(safe-area-inset-left));
+  }
+
+  .top-actions {
+    gap: 7px;
   }
 
   .time-text,
@@ -932,23 +954,29 @@ body.zen-mode .center-mood-container {
   }
 
   .center-mood-container {
-    top: 42%;
+    top: 40%;
     padding: 12px 16px;
+    max-width: 92vw;
   }
 
   .center-mood-quote {
     font-size: 1.08rem;
+    line-height: 1.55;
+  }
+
+  .center-mood-sub {
+    font-size: 0.72rem;
   }
 
   .player-container {
-    bottom: 20px;
-    padding: 0 14px;
+    bottom: max(18px, calc(12px + env(safe-area-inset-bottom)));
+    padding: 0 max(12px, env(safe-area-inset-right)) 0 max(12px, env(safe-area-inset-left));
   }
 
   .floating-player {
     grid-template-columns: auto 1fr;
     grid-template-rows: auto auto;
-    gap: 10px 14px;
+    gap: 10px 12px;
     padding: 12px 14px;
     border-radius: var(--radius-md);
   }
@@ -967,8 +995,9 @@ body.zen-mode .center-mood-container {
     grid-column: 1 / -1;
     grid-row: 2;
     justify-content: center;
-    padding-top: 4px;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    gap: 4px;
+    padding-top: 6px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
   }
 
   .btn-control {
@@ -979,6 +1008,215 @@ body.zen-mode .center-mood-container {
   .btn-play-pause {
     width: 42px;
     height: 42px;
+    margin: 0 4px;
+  }
+
+  .sleep-timer-popup {
+    right: -10px;
+    max-width: min(220px, calc(100vw - 32px));
+  }
+
+  .volume-slider-popup {
+    left: 50%;
+    transform: translateX(-50%) translateY(6px);
+  }
+
+  .creator-credit-wrap {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .top-bar {
+    height: 54px;
+    padding: 0 max(10px, env(safe-area-inset-right)) 0 max(10px, env(safe-area-inset-left));
+  }
+
+  .top-actions {
+    gap: 5px;
+  }
+
+  .btn-top-action {
+    width: 32px;
+    height: 32px;
+  }
+
+  .btn-top-action svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .time-display {
+    padding: 4px 10px;
+  }
+
+  .time-text,
+  .header-link {
+    font-size: 0.70rem;
+    padding: 4px 9px;
+  }
+
+  .center-mood-container {
+    top: 38%;
+    padding: 10px 12px;
+    max-width: 94vw;
+  }
+
+  .center-mood-quote {
+    font-size: 0.98rem;
+  }
+
+  .center-mood-sub {
+    font-size: 0.68rem;
+    margin-top: 4px;
+  }
+
+  .player-container {
+    bottom: max(14px, calc(8px + env(safe-area-inset-bottom)));
+    padding: 0 max(8px, env(safe-area-inset-right)) 0 max(8px, env(safe-area-inset-left));
+  }
+
+  .floating-player {
+    padding: 10px 12px;
+    gap: 8px 10px;
+  }
+
+  .track-artwork-wrap {
+    width: 40px;
+    height: 40px;
+  }
+
+  .track-title {
+    font-size: 0.88rem;
+  }
+
+  .track-artist {
+    font-size: 0.72rem;
+  }
+
+  .timeline-wrapper {
+    gap: 8px;
+  }
+
+  .time-label {
+    font-size: 0.66rem;
+    min-width: 25px;
+  }
+
+  .player-controls {
+    gap: 2px;
+    padding-top: 4px;
+  }
+
+  .btn-control {
+    width: 33px;
+    height: 33px;
+  }
+
+  .btn-control svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  .btn-play-pause {
+    width: 39px;
+    height: 39px;
+    margin: 0 2px;
+  }
+
+  .btn-play-pause svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+@media (max-width: 360px) {
+  .floating-player {
+    padding: 8px 10px;
+    gap: 6px 8px;
+  }
+
+  .track-artwork-wrap {
+    width: 36px;
+    height: 36px;
+  }
+
+  .track-title {
+    font-size: 0.82rem;
+  }
+
+  .btn-control {
+    width: 30px;
+    height: 30px;
+  }
+
+  .btn-play-pause {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+@media (max-height: 540px) and (orientation: landscape) {
+  .top-bar {
+    height: 46px;
+    padding: 0 max(16px, env(safe-area-inset-right)) 0 max(16px, env(safe-area-inset-left));
+  }
+
+  .center-mood-container {
+    top: 32%;
+    transform: translate(-50%, -32%);
+    padding: 8px 14px;
+  }
+
+  .center-mood-quote {
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+
+  .center-mood-sub {
+    font-size: 0.66rem;
+    margin-top: 2px;
+  }
+
+  .player-container {
+    bottom: max(8px, calc(4px + env(safe-area-inset-bottom)));
+    padding: 0 max(14px, env(safe-area-inset-right)) 0 max(14px, env(safe-area-inset-left));
+  }
+
+  .floating-player {
+    grid-template-columns: auto 1fr auto;
+    grid-template-rows: 1fr;
+    gap: 12px;
+    padding: 8px 14px;
+  }
+
+  .track-artwork-wrap {
+    width: 38px;
+    height: 38px;
+  }
+
+  .track-details {
+    grid-column: 2;
+    grid-row: 1;
+    gap: 4px;
+  }
+
+  .player-controls {
+    grid-column: 3;
+    grid-row: 1;
+    border-top: none;
+    padding-top: 0;
+    gap: 3px;
+  }
+
+  .btn-control {
+    width: 30px;
+    height: 30px;
+  }
+
+  .btn-play-pause {
+    width: 36px;
+    height: 36px;
   }
 
   .creator-credit-wrap {
